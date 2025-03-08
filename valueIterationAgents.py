@@ -65,7 +65,22 @@ class ValueIterationAgent(ValueEstimationAgent):
           value iteration, V_k+1(...) depends on V_k(...)'s.
         """
         "*** YOUR CODE HERE ***"
-
+        """
+        while iteration > 0:
+            loop through each state:
+                find best available action from current state
+                update state value with q value from best action
+            once iterate through each state once subtract iteration by 1
+        """
+        for _ in range(self.iterations):
+            copy_values = self.values.copy()
+            for state in self.mdp.getStates():
+                if not self.mdp.isTerminal(state):
+                    best_action = self.computeActionFromValues(state)
+                    if best_action is not None:
+                        copy_values[state] = self.computeQValueFromValues(state, best_action)
+            #Update all at once 
+            self.values = copy_values
 
 
     def getValue(self, state):
@@ -85,7 +100,7 @@ class ValueIterationAgent(ValueEstimationAgent):
         for transition_state in transition_states: 
             next_state = transition_state[0]
             probability = transition_state[1]
-            value += probability * [self.mdp.getReward(state, action, next_state) + self.discount_rate * self.get_values(next_state)]
+            value += probability * (self.mdp.getReward(state, action, next_state) + self.discount * self.getValue(next_state))
         return value
 
                 
@@ -100,9 +115,6 @@ class ValueIterationAgent(ValueEstimationAgent):
           terminal state, you should return None.
         """
         "*** YOUR CODE HERE ***"
-        if self.mdp.isTerminal(state):
-            return None
-        
         best_action = None
         max_value = float('-inf')
         actions = self.mdp.getPossibleActions(state)
