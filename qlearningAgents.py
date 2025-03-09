@@ -124,11 +124,15 @@ class QLearningAgent(ReinforcementAgent):
         legalActions = self.getLegalActions(state)
         action = None
         "*** YOUR CODE HERE ***"
-        random = util.flipCoin(self.epsilon)
-        if random:
+        
+        if not legalActions:
+            return None 
+        
+        # pick random action
+        if util.flipCoin(self.epsilon):  # don't use the word 'random' cause it overrides random module. error.
             action = random.choice(legalActions)
-        else:
-            action = self.getPolicy(state)
+        else:  # pick the best action based on Q-values
+            action = self.computeActionFromQValues(state) #compute with q values, not getPolicy()
         return action
 
     def update(self, state, action, nextState, reward: float):
